@@ -6,7 +6,7 @@ my_url = 'https://www.liquor.com/recipes/page/1'
 uClient = uReq(my_url)
 page_html = uClient.read()
 uClient.close()
-#turn recipe 
+#turn recipe into soup
 page_soup = soup(page_html, "html.parser")
 
 for h3 in page_soup.find_all('h3'):
@@ -19,12 +19,18 @@ for h3 in page_soup.find_all('h3'):
 
 	print("\n")
 
-	amounts = recipe_soup.find("div", class_ = "ml-value")
-	ingredients = recipe_soup.find("div", class_ = "col-xs-8 x-recipe-ingredient")
-
 	#name of the drink
 	print(h3.get_text())
+
+	# ingreditents and amounts
 	print("INGREDIENTS:")
+	shopping_list = recipe_soup.find_all("div", class_ = "row x-recipe-unit")
+	for line in shopping_list:
+		ingredient = line.find("div", class_ = "col-xs-8 x-recipe-ingredient").get_text().strip()
+		amount = line.find("div", class_ = "ml-value").get_text().strip()
+		print('{:12}'.format(amount) + "	" + ingredient)
+
+	#recipe
 	print("RECIPE:")
 	recipe = recipe_soup.find("div", class_ = "row x-recipe-prep")
 	steps = recipe.find_all('p')
